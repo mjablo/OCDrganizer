@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-
-namespace OCDrganizer
+﻿namespace OCDrganizer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Data;
+    using System.Drawing;
+    using System.Linq;
+    using System.Text;
+    using System.Windows.Forms;
+
     public partial class EditTaskForm : Form
     {
+        //--- Constructor
         public EditTaskForm(ListViewItem item)
         {
             InitializeComponent();
@@ -25,9 +26,14 @@ namespace OCDrganizer
                 comboBoxPriority.SelectedItem = "Low";
             else 
             {
+                /* if task is already finished, don't allow changes to priority;
+                 * and since DropDownList style of comboBox looks similar to a button,
+                 * replace the whole thing with inactive, same sized button */
+
                 SuspendLayout();
 
                 comboBoxPriority.Visible = false;
+
                 Button ButtonAlreadyFinishedMask = new Button();
                 ButtonAlreadyFinishedMask.Location = comboBoxPriority.Location;
                 ButtonAlreadyFinishedMask.Size = comboBoxPriority.Size;
@@ -40,6 +46,7 @@ namespace OCDrganizer
 
         }
 
+        //--- Events
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             this.Close();

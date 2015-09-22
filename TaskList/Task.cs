@@ -1,22 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace TaskListView
+﻿namespace TaskListView
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    
     class Task
     {
+        //--- Fields
         static private uint taskIndexGen = 0;
-
         private uint index;
         private string name;
         private string priority;
-
         private DateTime date;
         private bool isDone = false;
         private bool isRoutine;
 
+
+        //--- Constructors
         public Task(string name, DateTime date, string priority)
         {
             index = taskIndexGen;
@@ -27,23 +28,23 @@ namespace TaskListView
             Priority = priority;
         }
 
-        #region Accessors
 
-        public uint Index 
+        //--- Properties
+        public uint Index
         {
             get { return index; }
         }
-        public string Name 
-        { 
+        public string Name
+        {
             get { return name; }
             set { name = value; }
         }
-        public string Priority 
+        public string Priority
         {
             get { return priority; }
             set { priority = value; }
         }
-        public DateTime Date 
+        public DateTime Date
         {
             get { return date; }
             set { date = value; }
@@ -53,12 +54,11 @@ namespace TaskListView
             get { return isDone; }
             set { isDone = value; }
         }
-        public bool IsRoutine 
+        public bool IsRoutine
         {
             get { return isRoutine; }
             set { isRoutine = value; }
         }
-
-        #endregion
+   
     }
 }

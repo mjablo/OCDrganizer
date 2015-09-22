@@ -1,21 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-
-namespace OCDrganizer
+﻿namespace OCDrganizer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Data;
+    using System.Drawing;
+    using System.Linq;
+    using System.Text;
+    using System.Windows.Forms;
+
     public partial class MainForm : Form
     {
+        
+        //--- Constructors
         public MainForm()
         {
             InitializeComponent();
 
-            // enable double buffering for TaskList control
             taskList.EnableDoubleBuffering();
 
             // set initial date and time
@@ -24,36 +25,28 @@ namespace OCDrganizer
         }
         
 
-        // Task Done Button
-        private void buttonDone_Click(object sender, EventArgs e)
-        {
-            if (taskList.SelectedItems.Count > 0)
-            {
-                taskList.SetAsDone(taskList.SelectedItems[0]);
-            }
-        }
-
-        #region MenuStrip
-        // File
+        //--- Events
+        //... Menu Strip
+        //.. File
         
-        //* Export Task List
-        //   !!!!!!
+        //. Export Task List
+        //      !!!!!!
         
-        //* Import Task List
-        //   !!!!!!
+        //. Import Task List
+        //      !!!!!!
         
-        //* Close
+        //. Close
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        #endregion
 
-        #region ToolStrip
-        // New Task
+        //... Tool Strip
+        //.. New Task
         private void toolStripButtonNewTask_Click(object sender, EventArgs e)
         {
+            // allow changes only for present and future dates
             if (monthCalendarMain.SelectionEnd.Date >= DateTime.Now.Date)
             {
                 NewTaskForm newTask = new NewTaskForm();
@@ -68,9 +61,10 @@ namespace OCDrganizer
             
         }
 
-        // Edit Task
+        //.. Edit Task
         private void toolStripButtonEditTask_Click(object sender, EventArgs e)
         {
+            // allow changes only for present and future dates
             if (monthCalendarMain.SelectionEnd.Date >= DateTime.Now.Date) 
             {
                 if (taskList.SelectedItems.Count > 0)
@@ -89,17 +83,25 @@ namespace OCDrganizer
             
         }
 
-        // Remove Task
+        //.. Remove Task
         private void toolStripButtonRemoveTask_Click(object sender, EventArgs e)
         {
             if (taskList.SelectedItems.Count > 0)
                 taskList.RemoveTask(taskList.SelectedItems[0]);
         }
 
-        #endregion
 
-        #region calendar
+        //... Task Done Button
+        private void buttonDone_Click(object sender, EventArgs e)
+        {
+            if (taskList.SelectedItems.Count > 0)
+            {
+                taskList.SetAsDone(taskList.SelectedItems[0]);
+            }
+        }
 
+
+        //... Calendar
         private void monthCalendarMain_DateSelected(object sender, DateRangeEventArgs e)
         {
             taskList.DisplayTaskListByDate(monthCalendarMain.SelectionEnd.Date);
@@ -134,11 +136,9 @@ namespace OCDrganizer
             }
         }
 
-        #endregion
 
-        #region timer
-
-        // tick interval set to 1000 ms 'cause +-1sec precision is more than enough
+        //... Clock
+        // timer's tick interval is set to 1000 ms 'cause +-1sec precision is more than enough
         private void timerMain_Tick(object sender, EventArgs e)
         {
             // DEBUG
@@ -149,9 +149,6 @@ namespace OCDrganizer
             if (labelTime.Text != DateTime.Now.TimeOfDay.ToString("h\\:mm"))
                 labelTime.Text = DateTime.Now.TimeOfDay.ToString("h\\:mm");
         }
-
-        #endregion
-
 
     }
 }
