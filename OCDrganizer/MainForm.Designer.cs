@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("High Priority", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Normal Priority", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Low Priority", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Finished Tasks", System.Windows.Forms.HorizontalAlignment.Left);
             this.menuStripMain = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportTaskListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -42,7 +46,7 @@
             this.statusStripMain = new System.Windows.Forms.StatusStrip();
             this.labelTime = new System.Windows.Forms.Label();
             this.toolStripMain = new System.Windows.Forms.ToolStrip();
-            this.toolStripButtonAddNewTask = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonNewTask = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonEditTask = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonRemoveTask = new System.Windows.Forms.ToolStripButton();
             this.labelDate = new System.Windows.Forms.Label();
@@ -53,7 +57,10 @@
             this.labelQuickDebug = new System.Windows.Forms.Label();
             this.taskList = new TaskListView.TaskListView();
             this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderDone = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderRoutine = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonDailyRoutine = new System.Windows.Forms.ToolStripButton();
+            this.toolStripLabelTask = new System.Windows.Forms.ToolStripLabel();
             this.menuStripMain.SuspendLayout();
             this.toolStripMain.SuspendLayout();
             this.panelTaskList.SuspendLayout();
@@ -131,7 +138,7 @@
             this.statusStripMain.Name = "statusStripMain";
             this.statusStripMain.Size = new System.Drawing.Size(894, 22);
             this.statusStripMain.TabIndex = 2;
-            this.statusStripMain.Text = "statusStripMain";
+            this.statusStripMain.Text = "Ready";
             // 
             // labelTime
             // 
@@ -149,31 +156,35 @@
             // toolStripMain
             // 
             this.toolStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonAddNewTask,
+            this.toolStripLabelTask,
+            this.toolStripButtonNewTask,
             this.toolStripButtonEditTask,
-            this.toolStripButtonRemoveTask});
+            this.toolStripButtonRemoveTask,
+            this.toolStripSeparator2,
+            this.toolStripButtonDailyRoutine});
             this.toolStripMain.Location = new System.Drawing.Point(0, 24);
             this.toolStripMain.Name = "toolStripMain";
             this.toolStripMain.Size = new System.Drawing.Size(894, 25);
             this.toolStripMain.TabIndex = 6;
             this.toolStripMain.Text = "toolStrip1";
             // 
-            // toolStripButtonAddNewTask
+            // toolStripButtonNewTask
             // 
-            this.toolStripButtonAddNewTask.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonAddNewTask.Image")));
-            this.toolStripButtonAddNewTask.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonAddNewTask.Name = "toolStripButtonAddNewTask";
-            this.toolStripButtonAddNewTask.Size = new System.Drawing.Size(103, 22);
-            this.toolStripButtonAddNewTask.Text = "Add New Task";
-            this.toolStripButtonAddNewTask.Click += new System.EventHandler(this.toolStripButtonAddNewTask_Click);
+            this.toolStripButtonNewTask.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonNewTask.Image")));
+            this.toolStripButtonNewTask.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonNewTask.Name = "toolStripButtonNewTask";
+            this.toolStripButtonNewTask.Size = new System.Drawing.Size(51, 22);
+            this.toolStripButtonNewTask.Text = "New";
+            this.toolStripButtonNewTask.Click += new System.EventHandler(this.toolStripButtonNewTask_Click);
             // 
             // toolStripButtonEditTask
             // 
             this.toolStripButtonEditTask.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonEditTask.Image")));
             this.toolStripButtonEditTask.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonEditTask.Name = "toolStripButtonEditTask";
-            this.toolStripButtonEditTask.Size = new System.Drawing.Size(74, 22);
-            this.toolStripButtonEditTask.Text = "Edit Task";
+            this.toolStripButtonEditTask.Size = new System.Drawing.Size(47, 22);
+            this.toolStripButtonEditTask.Text = "Edit";
+            this.toolStripButtonEditTask.ToolTipText = "Edit Task";
             this.toolStripButtonEditTask.Click += new System.EventHandler(this.toolStripButtonEditTask_Click);
             // 
             // toolStripButtonRemoveTask
@@ -181,8 +192,9 @@
             this.toolStripButtonRemoveTask.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonRemoveTask.Image")));
             this.toolStripButtonRemoveTask.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonRemoveTask.Name = "toolStripButtonRemoveTask";
-            this.toolStripButtonRemoveTask.Size = new System.Drawing.Size(97, 22);
-            this.toolStripButtonRemoveTask.Text = "Remove Task";
+            this.toolStripButtonRemoveTask.Size = new System.Drawing.Size(70, 22);
+            this.toolStripButtonRemoveTask.Text = "Remove";
+            this.toolStripButtonRemoveTask.ToolTipText = "Remove Task";
             this.toolStripButtonRemoveTask.Click += new System.EventHandler(this.toolStripButtonRemoveTask_Click);
             // 
             // labelDate
@@ -262,7 +274,20 @@
             this.taskList.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.taskList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderName,
-            this.columnHeaderDone});
+            this.columnHeaderRoutine});
+            listViewGroup1.Header = "High Priority";
+            listViewGroup1.Name = "listViewGroupHighPrioriy";
+            listViewGroup2.Header = "Normal Priority";
+            listViewGroup2.Name = "listViewGroupNormalPriority";
+            listViewGroup3.Header = "Low Priority";
+            listViewGroup3.Name = "listViewGroupLowPriority";
+            listViewGroup4.Header = "Finished Tasks";
+            listViewGroup4.Name = "listViewGroupFinished";
+            this.taskList.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4});
             this.taskList.Location = new System.Drawing.Point(0, 38);
             this.taskList.Margin = new System.Windows.Forms.Padding(0);
             this.taskList.Name = "taskList";
@@ -274,11 +299,31 @@
             // columnHeaderName
             // 
             this.columnHeaderName.Text = "Task";
-            this.columnHeaderName.Width = 107;
+            this.columnHeaderName.Width = 219;
             // 
-            // columnHeaderDone
+            // columnHeaderRoutine
             // 
-            this.columnHeaderDone.Text = "Done";
+            this.columnHeaderRoutine.Text = "Daily Routine";
+            this.columnHeaderRoutine.Width = 105;
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButtonDailyRoutine
+            // 
+            this.toolStripButtonDailyRoutine.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonDailyRoutine.Image")));
+            this.toolStripButtonDailyRoutine.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonDailyRoutine.Name = "toolStripButtonDailyRoutine";
+            this.toolStripButtonDailyRoutine.Size = new System.Drawing.Size(97, 22);
+            this.toolStripButtonDailyRoutine.Text = "Daily Routine";
+            // 
+            // toolStripLabelTask
+            // 
+            this.toolStripLabelTask.Name = "toolStripLabelTask";
+            this.toolStripLabelTask.Size = new System.Drawing.Size(39, 22);
+            this.toolStripLabelTask.Text = "Tasks:";
             // 
             // MainForm
             // 
@@ -316,7 +361,7 @@
         private System.Windows.Forms.StatusStrip statusStripMain;
         private System.Windows.Forms.Label labelTime;
         private System.Windows.Forms.ToolStrip toolStripMain;
-        private System.Windows.Forms.ToolStripButton toolStripButtonAddNewTask;
+        private System.Windows.Forms.ToolStripButton toolStripButtonNewTask;
         private System.Windows.Forms.ToolStripButton toolStripButtonEditTask;
         private System.Windows.Forms.ToolStripButton toolStripButtonRemoveTask;
         private System.Windows.Forms.Label labelDate;
@@ -330,8 +375,11 @@
         private TaskListView.TaskListView taskList;
         private System.Windows.Forms.ColumnHeader columnHeaderName;
         private System.Windows.Forms.Timer timerMain;
-        private System.Windows.Forms.ColumnHeader columnHeaderDone;
         private System.Windows.Forms.Label labelQuickDebug;
+        private System.Windows.Forms.ColumnHeader columnHeaderRoutine;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripButton toolStripButtonDailyRoutine;
+        private System.Windows.Forms.ToolStripLabel toolStripLabelTask;
     }
 }
 

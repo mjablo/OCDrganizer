@@ -10,7 +10,8 @@ namespace TaskListView
     {
         
         private List<TaskListForDate> listForDates = new List<TaskListForDate>();
-
+        private const int listsIndexNotFound = -1;
+        
         //!!!! debug
         public string listForDatesCount() 
         {
@@ -18,109 +19,105 @@ namespace TaskListView
         }
         //!!!! eof debug
 
-        private const int listsIndexNotFound = -1;
-
-        public const int isDoneColumnIndex = 1;
-
-        //
-        // Methods
-        //
         public void EnableDoubleBuffering() 
         {
             this.DoubleBuffered = true;
         }
-
         public void DisableDoubleBuffering()
         {
             this.DoubleBuffered = false;
         }
 
 
-        public void AddTask(string name, DateTime date) 
+        public void AddTask(string name, DateTime date, string priority)
         {
-            int index;
+            int listForDatesIndex;
 
-            // if it's a 
+            // check if it's a first task to be ever created
             if (listForDates.Count == 0)
             {
                 TaskListForDate newListItem = new TaskListForDate(date);
                 listForDates.Add(newListItem);
-                index = 0;
+                listForDatesIndex = 0;
             }
             else
             {
-                index = GetListsIndexByDate(date);
+                listForDatesIndex = getListsIndexByDate(date);
 
-                if (index == listsIndexNotFound)
+                if (listForDatesIndex == listsIndexNotFound)
                 {
                     // add a new item at the end of a list and get its index from current count,
                     // line below works because []indexes start from 0 while .Counts from 1
-                    index = listForDates.Count;
+                    listForDatesIndex = listForDates.Count;
 
                     TaskListForDate newListItem = new TaskListForDate(date);
                     listForDates.Add(newListItem);
                 }
             }
-            Task newTask = new Task(name, date);
-            listForDates[index].AddTask(newTask);
+            Task newTask = new Task(name, date, priority);            
+            listForDates[listForDatesIndex].AddTask(newTask);
 
-            DisplayTaskListByIndex(index);
+            displayTaskListByListIndex(listForDatesIndex);
+        }
+
+        public void EditTask(ListViewItem item, DateTime calendarsSelectedDate, string name, string priority)
+        {
+            // cast tagged ListViewItem's object into usable form
+            Task task = (Task)item.Tag;
+
+            task.Name = name;
+            if(!task.IsDone)
+                task.Priority = priority;
+
+            DisplayTaskListByDate(calendarsSelectedDate);
         }
 
         public void RemoveTask(ListViewItem item) 
         {
-            // cast tagged ListViewItem's object into usable form, extract Date properity
-            // and use it to get listForDates []indexer
+            // cast tagged ListViewItem's object into usable form
             Task task = (Task)item.Tag;
-            int listForDatesIndexer = GetListsIndexByDate(task.Date);
 
-            // iterate through proper listForDates[] inner TaskList[]
-            for (int i = 0; i < listForDates[listForDatesIndexer].TaskList.Count; i++)
+            // extract Date properity and use it to get listForDates index
+            int listForDatesIndex = getListsIndexByDate(task.Date);
+
+            // iterate through proper listForDates inner TaskList
+            for (int i = 0; i < listForDates[listForDatesIndex].TaskList.Count; i++)
                 // if Task.Index properties match
-                if (task.Index == listForDates[listForDatesIndexer].TaskList[i].Index)
+                if (task.Index == listForDates[listForDatesIndex].TaskList[i].Index)
                 {
                     // remove that task and break out of the rest of the loop
-                    listForDates[listForDatesIndexer].TaskList.RemoveAt(i);
+                    listForDates[listForDatesIndex].TaskList.RemoveAt(i);
                     break;
                 }
 
             // if the last task from the list was removed, also remove now empty 
             // and unnecessary listForDates item
-            if (listForDates[listForDatesIndexer].TaskList.Count == 0)
+            if (listForDates[listForDatesIndex].TaskList.Count == 0)
             {
-                listForDates.RemoveAt(listForDatesIndexer);
-                listForDatesIndexer = listsIndexNotFound;
+                listForDates.RemoveAt(listForDatesIndex);
+                listForDatesIndex = listsIndexNotFound;
             }
 
             // Refresh items displayed by TaskViewList
-            DisplayTaskListByIndex(listForDatesIndexer);
+            displayTaskListByListIndex(listForDatesIndex);
         }
 
         public void SetAsDone(ListViewItem item)
         {
             Task task = (Task)item.Tag;
             task.IsDone = true;
-            this.Items[item.Index].SubItems[isDoneColumnIndex].Text = "Done";
+            
+            DisplayTaskListByDate(task.Date);
         }
 
-        public void DisplayTaskList(DateTime date) 
+        public void DisplayTaskListByDate(DateTime date) 
         {
-            DisplayTaskListByIndex(GetListsIndexByDate(date));
+            displayTaskListByListIndex(getListsIndexByDate(date));
         }
 
-        // !!!
-        public DateTime GetDate(ListViewItem item)
-        { 
-            Task task = (Task)item.Tag;
-            return task.Date;
-        }
-        // !!!
-
-        //
-        // Helpers
-        //
-        //* Display tasks from proper listForDates container, based on its []indexer
-        private void DisplayTaskListByIndex(int index) 
+        #region helpers
+        
+        private void displayTaskListByListIndex(int index) 
         {
             // clear every TaskListView item
             this.Items.Clear();
@@ -132,11 +129,16 @@ namespace TaskListView
                     ListViewItem item = new ListViewItem();
                     item.Text = t.Name;
 
+                    // !!!!! magic numbers ahead
                     if (t.IsDone)
-                        item.SubItems.Add("Done");
-                    else
-                        item.SubItems.Add("");
-
+                        item.Group = this.Groups[3];
+                    else if (t.Priority == "High")
+                        item.Group = this.Groups[0];
+                    else if (t.Priority == "Normal")
+                        item.Group = this.Groups[1];
+                    else 
+                        item.Group = this.Groups[2];
+                                            
                     item.Tag = t;
 
                     this.Items.Add(item);
@@ -144,26 +146,28 @@ namespace TaskListView
             }
         }
 
-        //* Find whether task's list for that date already exists
-        //* if so, return it's list[] index
-        //* otherwise return listsIndexNotFound
-        private int GetListsIndexByDate(DateTime date) 
+        // return listForDates index if it exists,
+        // otherwise return listsIndexNotFound
+        private int getListsIndexByDate(DateTime date) 
         {
             bool dateFoundFlag = false;
-            int i = 0;
+            int index = 0;
 
-            while (i < listForDates.Count && !dateFoundFlag)
+            while (index < listForDates.Count && !dateFoundFlag)
             {
-                if (listForDates[i].Date == date.Date)
+                if (listForDates[index].Date == date.Date)
                     dateFoundFlag = true;
                 else
-                    i++;
+                    index++;
             }
 
             if (!dateFoundFlag)
-                i = listsIndexNotFound;
+                index = listsIndexNotFound;
             
-            return i;
+            return index;
         }
+        
+        #endregion
+
     }
 }
