@@ -5,35 +5,25 @@
     using System.Linq;
     using System.Text;
     
-    class Task
+    public class Task
     {
         //--- Fields
-        static private uint taskIndexGen = 0;
-        private uint index;
         private string name;
         private string priority;
-        private DateTime date;
-        private bool isDone = false;
-        private bool isRoutine;
-
+        protected string status;
 
         //--- Constructors
-        public Task(string name, DateTime date, string priority)
+        public Task(string name, string priority)
         {
-            index = taskIndexGen;
-            taskIndexGen++;
+
+            status = "";
 
             Name = name;
-            Date = date;
             Priority = priority;
         }
 
 
         //--- Properties
-        public uint Index
-        {
-            get { return index; }
-        }
         public string Name
         {
             get { return name; }
@@ -44,21 +34,10 @@
             get { return priority; }
             set { priority = value; }
         }
-        public DateTime Date
+        internal string Status 
         {
-            get { return date; }
-            set { date = value; }
+            get { return status; }
+            set { status = value; }
         }
-        public bool IsDone
-        {
-            get { return isDone; }
-            set { isDone = value; }
-        }
-        public bool IsRoutine
-        {
-            get { return isRoutine; }
-            set { isRoutine = value; }
-        }
-   
     }
 }

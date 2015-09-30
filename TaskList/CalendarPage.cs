@@ -5,15 +5,16 @@
     using System.Linq;
     using System.Text;
 
-    class TaskListForDate
+    class CalendarPage
     {
         //--- Fields
         private DateTime date;
-        private List<Task> taskList = new List<Task>();
+        private List<ListedTask> taskList = new List<ListedTask>();
+        private bool hasRoutineTasksAdded = false;
 
 
         //--- Constructors
-        public TaskListForDate(DateTime date) 
+        public CalendarPage(DateTime date) 
         {
             this.date = date;
         }
@@ -24,11 +25,15 @@
         {
             get { return date; }
         }
-        public List<Task> TaskList 
+        internal List<ListedTask> TaskList 
         {
             get { return taskList; }
             set { taskList = value; }
         }
-
+        public bool HasRoutineTasksAdded
+        {
+            get { return hasRoutineTasksAdded; }
+            set { hasRoutineTasksAdded = value; }
+        }
     }
 }

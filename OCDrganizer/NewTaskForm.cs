@@ -15,6 +15,7 @@
         public NewTaskForm()
         {
             InitializeComponent();
+
             comboBoxPriority.SelectedItem = "Normal";
         }
 

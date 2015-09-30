@@ -17,11 +17,12 @@
         {
             InitializeComponent();
 
-            taskList.EnableDoubleBuffering();
-
             // set initial date and time
             labelDate.Text = DateTime.Now.ToLongDateString() + " (Today)";
             labelTime.Text = DateTime.Now.TimeOfDay.ToString("h\\:mm");
+
+            // populate initial list items
+            taskList.DisplayCalendarPage(DateTime.Now.Date);
         }
         
 
@@ -67,7 +68,7 @@
             // allow changes only for present and future dates
             if (monthCalendarMain.SelectionEnd.Date >= DateTime.Now.Date) 
             {
-                if (taskList.SelectedItems.Count > 0)
+                if (taskList.SelectedItems.Count > 0 && taskList.SelectedItems[0].SubItems[1].Text != "Routine")
                 {
                     EditTaskForm editTask = new EditTaskForm(taskList.SelectedItems[0]);
                     editTask.Owner = this;
@@ -86,17 +87,24 @@
         //.. Remove Task
         private void toolStripButtonRemoveTask_Click(object sender, EventArgs e)
         {
-            if (taskList.SelectedItems.Count > 0)
-                taskList.RemoveTask(taskList.SelectedItems[0]);
+            if (taskList.SelectedItems.Count > 0 && taskList.SelectedItems[0].SubItems[1].Text != "Routine")
+                taskList.RemoveTask(taskList.SelectedItems[0], monthCalendarMain.SelectionEnd.Date);
         }
 
+        //.. Routine
+        private void toolStripButtonRoutine_Click(object sender, EventArgs e)
+        {
+            RoutineSetupForm routineSetup = new RoutineSetupForm(taskList.RoutineTasks);
+            routineSetup.Owner = this;
+            routineSetup.ShowDialog();
+        }
 
         //... Task Done Button
         private void buttonDone_Click(object sender, EventArgs e)
         {
             if (taskList.SelectedItems.Count > 0)
             {
-                taskList.SetAsDone(taskList.SelectedItems[0]);
+                taskList.SetAsDone(taskList.SelectedItems[0], monthCalendarMain.SelectionEnd.Date);
             }
         }
 
@@ -104,7 +112,7 @@
         //... Calendar
         private void monthCalendarMain_DateSelected(object sender, DateRangeEventArgs e)
         {
-            taskList.DisplayTaskListByDate(monthCalendarMain.SelectionEnd.Date);
+            taskList.DisplayCalendarPage(monthCalendarMain.SelectionEnd.Date);
 
             labelDate.Text = monthCalendarMain.SelectionEnd.ToLongDateString();
             if (monthCalendarMain.SelectionEnd.Date == DateTime.Now.Date)
@@ -141,11 +149,9 @@
         // timer's tick interval is set to 1000 ms 'cause +-1sec precision is more than enough
         private void timerMain_Tick(object sender, EventArgs e)
         {
-            // DEBUG
-            labelQuickDebug.Text = "listForDates.Count = ";
-            labelQuickDebug.Text += taskList.listForDatesCount();
-            // eof DEBUG
-
+            if (taskList.SelectedItems.Count > 0)
+                labelQuickDebug.Text = taskList.SelectedItems[0].SubItems[1].Text;
+            
             if (labelTime.Text != DateTime.Now.TimeOfDay.ToString("h\\:mm"))
                 labelTime.Text = DateTime.Now.TimeOfDay.ToString("h\\:mm");
         }
