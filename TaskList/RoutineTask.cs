@@ -20,6 +20,13 @@
             status = "Routine (Preview)";
         }
 
+        public RoutineTask(RoutineTask source) : base(source) 
+        {
+            IsWeekend = source.IsWeekend;
+            IsWorkweek = source.IsWorkweek;
+            status = source.Status;
+        }
+
         //--- Properties
         public bool IsWorkweek
         {

@@ -15,13 +15,17 @@
         //--- Constructors
         public Task(string name, string priority)
         {
-
-            status = "";
-
             Name = name;
             Priority = priority;
+            Status = "";
         }
 
+        public Task(Task source) 
+        {
+            Status = source.Status;
+            Name = source.Name;
+            Priority = source.Priority;
+        }
 
         //--- Properties
         public string Name

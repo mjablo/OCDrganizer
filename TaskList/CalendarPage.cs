@@ -9,7 +9,7 @@
     {
         //--- Fields
         private DateTime date;
-        private List<ListedTask> taskList = new List<ListedTask>();
+        private List<CalendarTask> taskList = new List<CalendarTask>();
         private bool hasRoutineTasksAdded = false;
 
 
@@ -18,14 +18,14 @@
         {
             this.date = date;
         }
-
+        private CalendarPage(CalendarPage page) {}
 
         //--- Properties
         public DateTime Date 
         {
             get { return date; }
         }
-        internal List<ListedTask> TaskList 
+        internal List<CalendarTask> TaskList 
         {
             get { return taskList; }
             set { taskList = value; }

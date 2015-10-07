@@ -9,8 +9,6 @@
     public class TaskListView : ListView
     {
         //--- Fields
-        private const int calendarPageIndexNotFound = -1;
-
         private List<CalendarPage> calendarPages = new List<CalendarPage>();
         private List<RoutineTask> routineTasks = new List<RoutineTask>();
 
@@ -28,11 +26,13 @@
             }
 
             //!!! debug
-            //routineTasks.Add(new RoutineTask("routine1", "Normal", true, true));
-            //routineTasks.Add(new RoutineTask("routine2", "Normal", true, false));
-            //routineTasks.Add(new RoutineTask("routine3", "Normal", false, true));
+            routineTasks.Add(new RoutineTask("routine1", "Normal", true, true));
+            routineTasks.Add(new RoutineTask("routine2", "Normal", true, false));
+            routineTasks.Add(new RoutineTask("routine3", "Normal", false, true));
             //!!! eof debug
         }
+
+        private TaskListView(TaskListView view) {}
 
         //--- Properties
         public List<RoutineTask> RoutineTasks 
@@ -41,40 +41,23 @@
         }
 
         //--- Methods
-        public void AddTask(string name, DateTime calendarSelectedDate, string priority)
+        public void AddTask(DateTime calendarSelectedDate, string name, string priority)
         {
-            // check if list for given date already exists; create one if doesn't
-            int calendarPageIndex = getCalendarPageIndexByDate(calendarSelectedDate);
-            if (calendarPageIndex == calendarPageIndexNotFound)
-            {
-                // save index now, add item later (because indexing starts with 0, counting with 1)
-                calendarPageIndex = calendarPages.Count;
-
-                calendarPages.Add(new CalendarPage(calendarSelectedDate));
-            }
-
-            // add new task
-            calendarPages[calendarPageIndex].TaskList.Add(new ListedTask(name, priority));
-
-            // refresh view
-            DisplayCalendarPage(calendarSelectedDate);
+            calendarPages[getCalendarPageIndexByDate(calendarSelectedDate)].TaskList.Add(new CalendarTask(name, priority));
         }
 
         public void EditTask(ListViewItem item, DateTime calendarSelectedDate, string name, string priority)
         {
-            ListedTask task = (ListedTask)item.Tag;
+            CalendarTask task = (CalendarTask)item.Tag;
 
             task.Name = name;
             if(!task.IsDone)
                 task.Priority = priority;
-
-            // refresh view
-            DisplayCalendarPage(calendarSelectedDate);
         }
 
         public void RemoveTask(ListViewItem item, DateTime calendarSelectedDate) 
         {
-            ListedTask task = (ListedTask)item.Tag;
+            CalendarTask task = (CalendarTask)item.Tag;
 
             int calendarPageIndex = getCalendarPageIndexByDate(calendarSelectedDate);
 
@@ -86,67 +69,61 @@
                     calendarPages[calendarPageIndex].TaskList.RemoveAt(i);
                     break;
                 }
-
-            // if the last task from the list was removed, also remove now empty 
-            // and unnecessary listForDates item
-            if (calendarPages[calendarPageIndex].TaskList.Count == 0)
-            {
-                calendarPages.RemoveAt(calendarPageIndex);
-                calendarPageIndex = calendarPageIndexNotFound;
-            }
-
-            // refresh view
-            DisplayCalendarPage(calendarSelectedDate);
         }
 
         public void SetAsDone(ListViewItem item, DateTime calendarSelectedDate)
         {
-            ListedTask task = (ListedTask)item.Tag;
+            CalendarTask task = (CalendarTask)item.Tag;
 
             task.IsDone = true;
-            
-            // refresh view
-            DisplayCalendarPage(calendarSelectedDate);
         }
 
         public void DisplayCalendarPage(DateTime calendarSelectedDate) 
         {
-            this.Items.Clear();
+            Items.Clear();
 
-            int listForDatesIndex = getCalendarPageIndexByDate(calendarSelectedDate);
-            if (listForDatesIndex != calendarPageIndexNotFound)
+            int calendarPageIndex = getCalendarPageIndexByDate(calendarSelectedDate);
+
+            // copy appropriate tasks from routineTasks list into selected CalendarPage if needed
+            if (calendarSelectedDate == DateTime.Now.Date && !calendarPages[calendarPageIndex].HasRoutineTasksAdded)
             {
-                // Routine tasks
-                if (calendarPages[listForDatesIndex].HasRoutineTasksAdded == false)
-                    populateCalendarPageWithRoutineTasks(calendarSelectedDate);
+                populateCalendarPageWithRoutineTasks(calendarSelectedDate);
+                calendarPages[calendarPageIndex].HasRoutineTasksAdded = true;
+            }
 
-                // Planned tasks
-                foreach (ListedTask t in calendarPages[listForDatesIndex].TaskList)
+
+            // if there's something to display, populate view with tasks written in seleceted CalendarPage
+            // otherwise delete empty CalendarPage
+            if (calendarPages[calendarPageIndex].TaskList.Count > 0)
+            {
+                foreach (CalendarTask ct in calendarPages[calendarPageIndex].TaskList)
                 {
-                    this.Items.Add(prepTaskForDisplay(t));
+                    this.Items.Add(prepTaskForDisplay(ct));
                 }
             }
             else 
-            { 
-                // display preview of routine tasks in future dates
-                if (calendarSelectedDate > DateTime.Now.Date)
-                {
-                    foreach (RoutineTask rt in routineTasks)
-                    {
+            {
+                calendarPages.RemoveAt(calendarPageIndex);
+            }
 
-                        if (rt.IsWorkweek &&
-                            (calendarSelectedDate.DayOfWeek >= DayOfWeek.Monday &&
-                             calendarSelectedDate.DayOfWeek <= DayOfWeek.Friday))
-                        {
-                            this.Items.Add(prepTaskForDisplay(rt));
-                        }
-                        if (rt.IsWeekend &&
-                            (calendarSelectedDate.DayOfWeek == DayOfWeek.Saturday ||
-                             calendarSelectedDate.DayOfWeek == DayOfWeek.Sunday))
-                        {
-                            this.Items.Add(prepTaskForDisplay(rt));
-                        }
-                    } 
+            // in future dates only, additionally display preview of currently planned routine tasks
+            if (calendarSelectedDate > DateTime.Now.Date)
+            {
+                foreach (RoutineTask rt in routineTasks)
+                {
+
+                    if (rt.IsWorkweek &&
+                        (calendarSelectedDate.DayOfWeek >= DayOfWeek.Monday &&
+                         calendarSelectedDate.DayOfWeek <= DayOfWeek.Friday))
+                    {
+                        this.Items.Add(prepTaskForDisplay(rt));
+                    }
+                    if (rt.IsWeekend &&
+                        (calendarSelectedDate.DayOfWeek == DayOfWeek.Saturday ||
+                         calendarSelectedDate.DayOfWeek == DayOfWeek.Sunday))
+                    {
+                        this.Items.Add(prepTaskForDisplay(rt));
+                    }
                 }
             }
 
@@ -154,9 +131,9 @@
         }
 
 
+
         //--- Helpers
-        
-        // return listForDates index if it exists, otherwise return listsIndexNotFound
+
         private int getCalendarPageIndexByDate(DateTime date) 
         {
             bool dateFoundFlag = false;
@@ -171,13 +148,47 @@
             }
 
             if (!dateFoundFlag)
-                index = calendarPageIndexNotFound;
-            
+            {
+                // add new calendar page at the end
+                index = calendarPages.Count;
+
+                calendarPages.Add(new CalendarPage(date)); 
+            }
+
             return index;
         }
 
-        // change Task-based classes into a form that can be displayed by TaskListView
-        private ListViewItem prepTaskForDisplay(ListedTask task)
+        private void populateCalendarPageWithRoutineTasks(DateTime calendarSelectedDate)
+        {
+            int calendarPageIndex = getCalendarPageIndexByDate(calendarSelectedDate);
+
+            foreach (RoutineTask rt in routineTasks)
+            {
+                if (rt.IsWorkweek &&
+                    (calendarSelectedDate.DayOfWeek >= DayOfWeek.Monday &&
+                     calendarSelectedDate.DayOfWeek <= DayOfWeek.Friday))
+                {
+                    CalendarTask newTask = new CalendarTask(rt.Name, rt.Priority);
+                    newTask.Status = "Routine";
+                    
+                    calendarPages[calendarPageIndex].TaskList.Add(newTask);
+                }
+
+                if (rt.IsWeekend &&
+                    (calendarSelectedDate.DayOfWeek == DayOfWeek.Saturday ||
+                     calendarSelectedDate.DayOfWeek == DayOfWeek.Sunday))
+                    {
+                        CalendarTask newTask = new CalendarTask(rt.Name, rt.Priority);
+                        newTask.Status = "Routine";
+                        
+                        calendarPages[calendarPageIndex].TaskList.Add(newTask);
+                    }
+                }
+        }
+
+
+        // change Task-derived classes into an item that can be displayed by TaskListView
+        private ListViewItem prepTaskForDisplay(CalendarTask task)
         { 
             ListViewItem item = new ListViewItem();
             
@@ -222,21 +233,5 @@
             return item;
         }
 
-        // 
-        private void populateCalendarPageWithRoutineTasks(DateTime date)
-        {
-            int calendarPageIndex = getCalendarPageIndexByDate(date);
-
-            foreach (RoutineTask rt in routineTasks)
-            {
-                // create ListedTask based on RoutineTask 
-                ListedTask newTask = new ListedTask(rt.Name, rt.Priority);
-                newTask.Status = "Routine";
-
-                calendarPages[calendarPageIndex].TaskList.Add(newTask);
-            }
-
-            calendarPages[calendarPageIndex].HasRoutineTasksAdded = true;
-        }
     }
 }

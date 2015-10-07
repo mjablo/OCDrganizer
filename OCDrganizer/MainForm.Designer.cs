@@ -30,10 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("High Priority", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Normal Priority", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Low Priority", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Finished Tasks", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("High Priority", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Normal Priority", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Low Priority", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Finished Tasks", System.Windows.Forms.HorizontalAlignment.Left);
             this.menuStripMain = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportTaskListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,13 +54,13 @@
             this.toolStripButtonRoutine = new System.Windows.Forms.ToolStripButton();
             this.labelDate = new System.Windows.Forms.Label();
             this.panelTaskList = new System.Windows.Forms.Panel();
-            this.taskList = new TaskListView.TaskListView();
-            this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.buttonDone = new System.Windows.Forms.Button();
             this.monthCalendarMain = new System.Windows.Forms.MonthCalendar();
             this.timerMain = new System.Windows.Forms.Timer(this.components);
             this.labelQuickDebug = new System.Windows.Forms.Label();
+            this.taskList = new TaskListView.TaskListView();
+            this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStripMain.SuspendLayout();
             this.toolStripMain.SuspendLayout();
             this.panelTaskList.SuspendLayout();
@@ -247,47 +247,6 @@
             this.panelTaskList.Size = new System.Drawing.Size(634, 477);
             this.panelTaskList.TabIndex = 9;
             // 
-            // taskList
-            // 
-            this.taskList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.taskList.BackColor = System.Drawing.SystemColors.Window;
-            this.taskList.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.taskList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeaderName,
-            this.columnHeaderStatus});
-            listViewGroup5.Header = "High Priority";
-            listViewGroup5.Name = "listViewGroupHighPrioriy";
-            listViewGroup6.Header = "Normal Priority";
-            listViewGroup6.Name = "listViewGroupNormalPriority";
-            listViewGroup7.Header = "Low Priority";
-            listViewGroup7.Name = "listViewGroupLowPriority";
-            listViewGroup8.Header = "Finished Tasks";
-            listViewGroup8.Name = "listViewGroupFinished";
-            this.taskList.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup5,
-            listViewGroup6,
-            listViewGroup7,
-            listViewGroup8});
-            this.taskList.Location = new System.Drawing.Point(0, 38);
-            this.taskList.Margin = new System.Windows.Forms.Padding(0);
-            this.taskList.Name = "taskList";
-            this.taskList.Size = new System.Drawing.Size(634, 438);
-            this.taskList.TabIndex = 9;
-            this.taskList.UseCompatibleStateImageBehavior = false;
-            this.taskList.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeaderName
-            // 
-            this.columnHeaderName.Text = "Task";
-            this.columnHeaderName.Width = 219;
-            // 
-            // columnHeaderStatus
-            // 
-            this.columnHeaderStatus.Text = "Status";
-            this.columnHeaderStatus.Width = 105;
-            // 
             // buttonDone
             // 
             this.buttonDone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -325,6 +284,49 @@
             this.labelQuickDebug.Size = new System.Drawing.Size(99, 13);
             this.labelQuickDebug.TabIndex = 10;
             this.labelQuickDebug.Text = "Quick Debug Label";
+            // 
+            // taskList
+            // 
+            this.taskList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.taskList.BackColor = System.Drawing.SystemColors.Window;
+            this.taskList.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.taskList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderName,
+            this.columnHeaderStatus});
+            this.taskList.FullRowSelect = true;
+            listViewGroup1.Header = "High Priority";
+            listViewGroup1.Name = "listViewGroupHighPrioriy";
+            listViewGroup2.Header = "Normal Priority";
+            listViewGroup2.Name = "listViewGroupNormalPriority";
+            listViewGroup3.Header = "Low Priority";
+            listViewGroup3.Name = "listViewGroupLowPriority";
+            listViewGroup4.Header = "Finished Tasks";
+            listViewGroup4.Name = "listViewGroupFinished";
+            this.taskList.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4});
+            this.taskList.Location = new System.Drawing.Point(0, 38);
+            this.taskList.Margin = new System.Windows.Forms.Padding(0);
+            this.taskList.MultiSelect = false;
+            this.taskList.Name = "taskList";
+            this.taskList.Size = new System.Drawing.Size(634, 438);
+            this.taskList.TabIndex = 9;
+            this.taskList.UseCompatibleStateImageBehavior = false;
+            this.taskList.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeaderName
+            // 
+            this.columnHeaderName.Text = "Task";
+            this.columnHeaderName.Width = 219;
+            // 
+            // columnHeaderStatus
+            // 
+            this.columnHeaderStatus.Text = "Status";
+            this.columnHeaderStatus.Width = 105;
             // 
             // MainForm
             // 

@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Text;
 
-    class ListedTask : Task
+    class CalendarTask : Task
     {
         //--- Fields
         static private uint taskIndexGen = 0;
@@ -13,7 +13,13 @@
         private bool isDone = false;
 
         //--- Constructors
-        public ListedTask(string name, string priority) : base(name, priority) 
+        public CalendarTask(string name, string priority) : base(name, priority) 
+        {
+            index = taskIndexGen;
+            taskIndexGen++;
+        }
+
+        public CalendarTask(CalendarTask source) : base(source)
         {
             index = taskIndexGen;
             taskIndexGen++;

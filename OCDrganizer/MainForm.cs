@@ -56,8 +56,11 @@
 
                 if (newTask.DialogResult == DialogResult.OK)
                 {
-                    taskList.AddTask(newTask.textBoxName.Text, monthCalendarMain.SelectionEnd.Date, newTask.comboBoxPriority.Text);
+                    taskList.AddTask(monthCalendarMain.SelectionEnd.Date, newTask.textBoxName.Text, newTask.comboBoxPriority.Text);
                 }
+
+                // refresh view
+                taskList.DisplayCalendarPage(monthCalendarMain.SelectionEnd.Date);
             }
             
         }
@@ -68,7 +71,7 @@
             // allow changes only for present and future dates
             if (monthCalendarMain.SelectionEnd.Date >= DateTime.Now.Date) 
             {
-                if (taskList.SelectedItems.Count > 0 && taskList.SelectedItems[0].SubItems[1].Text != "Routine")
+                if (taskList.SelectedItems.Count > 0 && taskList.SelectedItems[0].SubItems[1].Text != "Routine (Preview)")
                 {
                     EditTaskForm editTask = new EditTaskForm(taskList.SelectedItems[0]);
                     editTask.Owner = this;
@@ -80,6 +83,9 @@
                                           editTask.textBoxName.Text, editTask.comboBoxPriority.Text);
                     }
                 }
+
+                // refresh view
+                taskList.DisplayCalendarPage(monthCalendarMain.SelectionEnd.Date);
             }
             
         }
@@ -87,16 +93,37 @@
         //.. Remove Task
         private void toolStripButtonRemoveTask_Click(object sender, EventArgs e)
         {
-            if (taskList.SelectedItems.Count > 0 && taskList.SelectedItems[0].SubItems[1].Text != "Routine")
+            if (taskList.SelectedItems.Count > 0 && taskList.SelectedItems[0].SubItems[1].Text != "Routine (Preview)")
                 taskList.RemoveTask(taskList.SelectedItems[0], monthCalendarMain.SelectionEnd.Date);
+
+            // refresh view
+            taskList.DisplayCalendarPage(monthCalendarMain.SelectionEnd.Date);
         }
 
         //.. Routine
         private void toolStripButtonRoutine_Click(object sender, EventArgs e)
         {
-            RoutineSetupForm routineSetup = new RoutineSetupForm(taskList.RoutineTasks);
+            // create new temporary List<> container and copy current routine task into it
+            List<TaskListView.RoutineTask> tmpRoutineTasks = new List<TaskListView.RoutineTask>();
+            foreach (TaskListView.RoutineTask rt in taskList.RoutineTasks)
+            {
+                tmpRoutineTasks.Add(new TaskListView.RoutineTask(rt));
+            }
+
+            RoutineSetupForm routineSetup = new RoutineSetupForm(ref tmpRoutineTasks);
             routineSetup.Owner = this;
             routineSetup.ShowDialog();
+
+            if (routineSetup.DialogResult == DialogResult.OK)
+            {
+                // save changes by copying back from modified temporary list
+                taskList.RoutineTasks.Clear();
+                taskList.RoutineTasks.AddRange(tmpRoutineTasks);
+
+                // refresh view if neccessary
+                if (monthCalendarMain.SelectionEnd.Date > DateTime.Now.Date)
+                    taskList.DisplayCalendarPage(monthCalendarMain.SelectionEnd.Date);
+            }
         }
 
         //... Task Done Button
@@ -106,6 +133,9 @@
             {
                 taskList.SetAsDone(taskList.SelectedItems[0], monthCalendarMain.SelectionEnd.Date);
             }
+
+            // refresh view
+            taskList.DisplayCalendarPage(monthCalendarMain.SelectionEnd.Date);
         }
 
 
@@ -146,7 +176,7 @@
 
 
         //... Clock
-        // timer's tick interval is set to 1000 ms 'cause +-1sec precision is more than enough
+        // timer's tick interval is set to 1000 ms because +-1sec precision is more than enough
         private void timerMain_Tick(object sender, EventArgs e)
         {
             if (taskList.SelectedItems.Count > 0)

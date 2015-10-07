@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ListedTask.cs" />
+    <Compile Include="CalendarTask.cs" />
     <Compile Include="RoutineTask.cs" />
     <Compile Include="Task.cs" />
     <Compile Include="CalendarPage.cs" />
